@@ -15,7 +15,10 @@ public class Field {
         return blocks.get( y * WIDTH + x );
     }
 
-    public void setBlock( int x, int y, Block block ) {
+    public void setBlock( Block block ) {
+        int x = block.getX();
+        int y = block.getY();
+
         assert x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
 
         blocks.put( y * WIDTH + x, block );

@@ -15,9 +15,13 @@ import java.util.Random;
 
 public class GameScreen extends AbstractScreen {
     private static final Color[] BLOCK_COLORS = new Color[]{
-            Color.BLUE,
-            Color.GREEN,
-            Color.RED
+            new Color( 0.66f, 0f, 0f, 0f ),     // maroon
+            Color.WHITE,
+            new Color( 0.66f, 0f, 0.66f, 0f ),  // magenta
+            new Color( 0f, 0f, 0.66f, 0f ),     // dark blue
+            new Color( 0f, 0.66f, 0f, 0f ),     // green
+            new Color( 0.66f, 0.33f, 0f, 0f ),  // brown
+            new Color( 0f, 0.66f, 0.66f, 0f )   // cyan
     };
 
     private GameState gameState;

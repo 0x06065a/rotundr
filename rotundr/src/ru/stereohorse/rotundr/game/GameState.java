@@ -3,9 +3,7 @@ package ru.stereohorse.rotundr.game;
 import ru.stereohorse.rotundr.model.Block;
 import ru.stereohorse.rotundr.model.Field;
 import ru.stereohorse.rotundr.model.gui.BlockVisual;
-import ru.stereohorse.rotundr.model.shapes.Shape;
-import ru.stereohorse.rotundr.model.shapes.ShapeFactoryI;
-import ru.stereohorse.rotundr.model.shapes.ShapeFactoryS;
+import ru.stereohorse.rotundr.model.shapes.*;
 
 import java.util.Random;
 
@@ -18,7 +16,12 @@ public abstract class GameState {
     private Shape currentShape;
     private static final Shape.ShapeFactory[] shapeFactories = new Shape.ShapeFactory[]{
             new ShapeFactoryI(),
-            new ShapeFactoryS()
+            new ShapeFactoryS(),
+            new ShapeFactoryZ(),
+            new ShapeFactoryO(),
+            new ShapeFactoryJ(),
+            new ShapeFactoryL(),
+            new ShapeFactoryT()
     };
 
     private float period = INITIAL_PERIOD;
@@ -38,7 +41,9 @@ public abstract class GameState {
         currentShape.setY( currentShape.getY() - 1 );
         if ( currentShape.getY() == 0 ) {
             for ( Block block : currentShape.getBlocks() ) {
-                field.setBlock( currentShape.getX() + block.getX(), currentShape.getY() + block.getY(), block );
+                block.setX( currentShape.getX() + block.getX() );
+                block.setY( currentShape.getY() + block.getY() );
+                field.setBlock( block );
             }
 
             currentShape = null;
