@@ -1,14 +1,16 @@
 package ru.stereohorse.rotundr.game;
 
+import ru.stereohorse.rotundr.model.Block;
 import ru.stereohorse.rotundr.model.Field;
+import ru.stereohorse.rotundr.model.gui.BlockVisual;
 import ru.stereohorse.rotundr.model.shapes.Shape;
 import ru.stereohorse.rotundr.model.shapes.ShapeFactoryI;
 import ru.stereohorse.rotundr.model.shapes.ShapeFactoryS;
 
 import java.util.Random;
 
-public class GameState {
-    private static final float INITIAL_PERIOD = 1f;
+public abstract class GameState {
+    private static final float INITIAL_PERIOD = 0.2f;
     private static final float PERIOD_DEGRADATION = 0.01f;
 
     private Field field = new Field();
@@ -30,11 +32,20 @@ public class GameState {
         }
 
         if ( currentShape == null ) {
-            currentShape = shapeFactories[random.nextInt( shapeFactories.length )].produce( 1 );
+            currentShape = shapeFactories[ random.nextInt( shapeFactories.length ) ].produce( createBlockVisual() );
         }
 
         currentShape.setY( currentShape.getY() - 1 );
+        if ( currentShape.getY() == 0 ) {
+            for ( Block block : currentShape.getBlocks() ) {
+                field.setBlock( currentShape.getX() + block.getX(), currentShape.getY() + block.getY(), block );
+            }
+
+            currentShape = null;
+        }
     }
+
+    protected abstract BlockVisual createBlockVisual();
 
     private boolean tick( float delta ) {
         periodLeft -= delta;

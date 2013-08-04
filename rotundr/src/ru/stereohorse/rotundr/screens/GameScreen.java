@@ -9,14 +9,26 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.stereohorse.rotundr.game.GameState;
 import ru.stereohorse.rotundr.model.Block;
 import ru.stereohorse.rotundr.model.Field;
+import ru.stereohorse.rotundr.model.gui.BlockVisual;
+
+import java.util.Random;
 
 public class GameScreen extends AbstractScreen {
+    private static final Color[] BLOCK_COLORS = new Color[]{
+            Color.BLUE,
+            Color.GREEN,
+            Color.RED
+    };
+
     private GameState gameState;
     private Actor fieldActor;
 
     private float cellSize;
 
     private ShapeRenderer shapeRenderer;
+
+    private Random random = new Random();
+
 
     public GameScreen( Game game ) {
         super( game );
@@ -34,7 +46,14 @@ public class GameScreen extends AbstractScreen {
         super.show();
 
         if ( gameState == null ) {
-            gameState = new GameState();
+            gameState = new GameState() {
+                @Override
+                protected BlockVisual createBlockVisual() {
+                    BlockVisual blockVisual = new BlockVisual();
+                    blockVisual.setColor( BLOCK_COLORS[ random.nextInt( BLOCK_COLORS.length ) ] );
+                    return blockVisual;
+                }
+            };
         }
 
         if ( fieldActor == null ) {
@@ -56,8 +75,8 @@ public class GameScreen extends AbstractScreen {
     private class FieldActor extends Actor {
         @Override
         public void draw( SpriteBatch batch, float parentAlpha ) {
-            int offsetX = (int) (( Gdx.graphics.getWidth() - cellSize * Field.WIDTH ) / 2);
-            int offsetY = (int) (( Gdx.graphics.getHeight() - cellSize * Field.HEIGHT ) / 2);
+            int offsetX = (int) ( ( Gdx.graphics.getWidth() - cellSize * Field.WIDTH ) / 2 );
+            int offsetY = (int) ( ( Gdx.graphics.getHeight() - cellSize * Field.HEIGHT ) / 2 );
 
             drawBackground( offsetX, offsetY );
             drawBlocks( batch, offsetX, offsetY );
@@ -65,16 +84,21 @@ public class GameScreen extends AbstractScreen {
 
         private void drawBlocks( SpriteBatch batch, int offsetX, int offsetY ) {
             shapeRenderer.begin( ShapeRenderer.ShapeType.FilledRectangle );
-            shapeRenderer.setColor( Color.GREEN );
 
             // draw field blocks
             for ( Block block : gameState.getField().getBlocks() ) {
-                shapeRenderer.filledRect( offsetX + block.getX() * cellSize, offsetY + block.getY() * cellSize, cellSize, cellSize );
+                shapeRenderer.setColor( block.getBlockVisual().getColor() );
+                shapeRenderer.filledRect(
+                        offsetX + block.getX() * cellSize,
+                        offsetY + block.getY() * cellSize,
+                        cellSize, cellSize
+                );
             }
 
             // draw shape blocks
             if ( gameState.getCurrentShape() != null ) {
                 for ( Block block : gameState.getCurrentShape().getBlocks() ) {
+                    shapeRenderer.setColor( block.getBlockVisual().getColor() );
                     shapeRenderer.filledRect(
                             offsetX + ( gameState.getCurrentShape().getX() + block.getX() ) * cellSize,
                             offsetY + ( gameState.getCurrentShape().getY() + block.getY() ) * cellSize,

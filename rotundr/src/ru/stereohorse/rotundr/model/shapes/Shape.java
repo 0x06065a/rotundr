@@ -2,6 +2,7 @@ package ru.stereohorse.rotundr.model.shapes;
 
 import ru.stereohorse.rotundr.model.Block;
 import ru.stereohorse.rotundr.model.Field;
+import ru.stereohorse.rotundr.model.gui.BlockVisual;
 
 public class Shape {
     protected Block[][] shapeStates;
@@ -29,9 +30,9 @@ public class Shape {
     }
 
     public static abstract class ShapeFactory {
-        public Shape produce( int colorIndex ) {
+        public Shape produce( BlockVisual blockVisual ) {
             Shape shape = new Shape();
-            Block.BlockFactory blockFactory = new Block.BlockFactory( colorIndex );
+            Block.BlockFactory blockFactory = new Block.BlockFactory( blockVisual );
             shape.shapeStates = createShapeStates( blockFactory );
             return shape;
         }

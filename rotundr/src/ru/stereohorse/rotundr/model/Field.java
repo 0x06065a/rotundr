@@ -9,25 +9,16 @@ public class Field {
 
     private Map<Integer, Block> blocks = new HashMap<Integer, Block>( WIDTH * HEIGHT );
 
-    public int getCellColorIndex( int x, int y ) {
-        Block block = blocks.get( y * WIDTH + x );
-        return block == null ? -1 : block.getColorIndex();
+    public Block getBlock( int x, int y ) {
+        assert x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
+
+        return blocks.get( y * WIDTH + x );
     }
 
-    public void setCellColorIndex( int x, int y, int colorIndex ) {
-        int key = y * WIDTH + x;
-        Block block = blocks.get( key );
+    public void setBlock( int x, int y, Block block ) {
+        assert x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
 
-        if ( block == null && x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT ) {
-            block = new Block();
-            block.setX( x );
-            block.setY( y );
-            blocks.put( key, block );
-        }
-
-        if ( block != null ) {
-            block.setColorIndex( colorIndex );
-        }
+        blocks.put( y * WIDTH + x, block );
     }
 
     public Iterable<Block> getBlocks() {
