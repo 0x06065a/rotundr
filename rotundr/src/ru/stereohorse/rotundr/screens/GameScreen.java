@@ -2,10 +2,10 @@ package ru.stereohorse.rotundr.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import ru.stereohorse.rotundr.game.GameState;
 import ru.stereohorse.rotundr.model.Block;
 import ru.stereohorse.rotundr.model.Field;
@@ -25,7 +25,6 @@ public class GameScreen extends AbstractScreen {
     };
 
     private GameState gameState;
-    private Actor fieldActor;
 
     private float cellSize;
 
@@ -33,9 +32,23 @@ public class GameScreen extends AbstractScreen {
 
     private Random random = new Random();
 
-
     public GameScreen( Game game ) {
         super( game );
+
+        Gdx.input.setInputProcessor( new InputAdapter() {
+            @Override
+            public boolean keyDown( int keycode ) {
+                if ( keycode == Input.Keys.RIGHT ) {
+                    gameState.moveCurrentShape( 1, 0 );
+                } else if ( keycode == Input.Keys.LEFT ) {
+                    gameState.moveCurrentShape( -1, 0 );
+                } else if ( keycode == Input.Keys.UP ) {
+                    gameState.rotateCurrentShape();
+                }
+
+                return true;
+            }
+        });
     }
 
     @Override
@@ -54,15 +67,10 @@ public class GameScreen extends AbstractScreen {
                 @Override
                 protected BlockVisual createBlockVisual() {
                     BlockVisual blockVisual = new BlockVisual();
-                    blockVisual.setColor( BLOCK_COLORS[ random.nextInt( BLOCK_COLORS.length ) ] );
+                    blockVisual.setColor( BLOCK_COLORS[random.nextInt( BLOCK_COLORS.length )] );
                     return blockVisual;
                 }
             };
-        }
-
-        if ( fieldActor == null ) {
-            fieldActor = new FieldActor();
-            stage.addActor( fieldActor );
         }
 
         if ( shapeRenderer == null ) {
@@ -73,53 +81,57 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void render( float delta ) {
         super.render( delta );
+
+        processInput();
+
         gameState.update( delta );
+
+        int offsetX = (int) ( ( Gdx.graphics.getWidth() - cellSize * Field.WIDTH ) / 2 );
+        int offsetY = (int) ( ( Gdx.graphics.getHeight() - cellSize * Field.HEIGHT ) / 2 );
+
+        drawBackground( offsetX, offsetY );
+        drawBlocks( offsetX, offsetY );
     }
 
-    private class FieldActor extends Actor {
-        @Override
-        public void draw( SpriteBatch batch, float parentAlpha ) {
-            int offsetX = (int) ( ( Gdx.graphics.getWidth() - cellSize * Field.WIDTH ) / 2 );
-            int offsetY = (int) ( ( Gdx.graphics.getHeight() - cellSize * Field.HEIGHT ) / 2 );
+    private void processInput() {
+        if ( Gdx.input.isKeyPressed( Input.Keys.DOWN ) ) {
+            gameState.moveCurrentShape( 0, -1 );
+        }
+    }
 
-            drawBackground( offsetX, offsetY );
-            drawBlocks( batch, offsetX, offsetY );
+    private void drawBlocks( int offsetX, int offsetY ) {
+        shapeRenderer.begin( ShapeRenderer.ShapeType.FilledRectangle );
+
+        // draw field blocks
+        for ( Block block : gameState.getField().getBlocks() ) {
+            shapeRenderer.setColor( block.getBlockVisual().getColor() );
+            shapeRenderer.filledRect(
+                    offsetX + block.getX() * cellSize,
+                    offsetY + block.getY() * cellSize,
+                    cellSize, cellSize
+            );
         }
 
-        private void drawBlocks( SpriteBatch batch, int offsetX, int offsetY ) {
-            shapeRenderer.begin( ShapeRenderer.ShapeType.FilledRectangle );
-
-            // draw field blocks
-            for ( Block block : gameState.getField().getBlocks() ) {
+        // draw shape blocks
+        if ( gameState.getCurrentShape() != null ) {
+            for ( Block block : gameState.getCurrentShape().getBlocks() ) {
                 shapeRenderer.setColor( block.getBlockVisual().getColor() );
                 shapeRenderer.filledRect(
-                        offsetX + block.getX() * cellSize,
-                        offsetY + block.getY() * cellSize,
+                        offsetX + ( gameState.getCurrentShape().getX() + block.getX() ) * cellSize,
+                        offsetY + ( gameState.getCurrentShape().getY() + block.getY() ) * cellSize,
                         cellSize, cellSize
                 );
             }
-
-            // draw shape blocks
-            if ( gameState.getCurrentShape() != null ) {
-                for ( Block block : gameState.getCurrentShape().getBlocks() ) {
-                    shapeRenderer.setColor( block.getBlockVisual().getColor() );
-                    shapeRenderer.filledRect(
-                            offsetX + ( gameState.getCurrentShape().getX() + block.getX() ) * cellSize,
-                            offsetY + ( gameState.getCurrentShape().getY() + block.getY() ) * cellSize,
-                            cellSize, cellSize
-                    );
-                }
-            }
-
-            shapeRenderer.end();
         }
 
-        private void drawBackground( float offsetX, float offsetY ) {
-            shapeRenderer.begin( ShapeRenderer.ShapeType.Rectangle );
-            shapeRenderer.setColor( Color.RED );
-            shapeRenderer.rect( offsetX, offsetY, cellSize * Field.WIDTH, cellSize * Field.HEIGHT );
-            shapeRenderer.end();
-        }
+        shapeRenderer.end();
+    }
+
+    private void drawBackground( float offsetX, float offsetY ) {
+        shapeRenderer.begin( ShapeRenderer.ShapeType.Rectangle );
+        shapeRenderer.setColor( Color.RED );
+        shapeRenderer.rect( offsetX, offsetY, cellSize * Field.WIDTH, cellSize * Field.HEIGHT );
+        shapeRenderer.end();
     }
 
     @Override

@@ -13,20 +13,16 @@ public class Shape {
 
     private int currentState;
 
-    public Block[] getRotatedBlocks() {
-        return shapeStates[ nextState() ];
-    }
-
     public Block[] getBlocks() {
         return shapeStates[ currentState ];
     }
 
-    public void rotate() {
-        currentState = nextState();
+    public void rotateRight() {
+        currentState = shapeStates.length == currentState + 1 ? 0 : currentState + 1;
     }
 
-    private int nextState() {
-        return shapeStates.length == currentState + 1 ? 0 : currentState + 1;
+    public void rotateLeft() {
+        currentState = currentState - 1 < 0 ? shapeStates.length - 1 : currentState - 1;
     }
 
     public static abstract class ShapeFactory {

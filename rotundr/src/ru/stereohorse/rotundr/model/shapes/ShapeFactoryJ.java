@@ -27,8 +27,8 @@ public class ShapeFactoryJ extends Shape.ShapeFactory {
                 new Block[]{
                         blockFactory.produce( 0, 1 ),
                         blockFactory.produce( 1, 1 ),
-                        blockFactory.produce( 1, 2 ),
-                        blockFactory.produce( 0, 2 )
+                        blockFactory.produce( 2, 1 ),
+                        blockFactory.produce( 2, 0 )
                 }
         };
     }
