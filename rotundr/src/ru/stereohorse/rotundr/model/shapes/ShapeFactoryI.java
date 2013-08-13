@@ -13,10 +13,10 @@ public class ShapeFactoryI extends Shape.ShapeFactory {
                         blockFactory.produce( 0, 3 )
                 },
                 new Block[]{
+                        blockFactory.produce( 3, 0 ),
                         blockFactory.produce( 0, 0 ),
                         blockFactory.produce( 1, 0 ),
-                        blockFactory.produce( 2, 0 ),
-                        blockFactory.produce( 3, 0 )
+                        blockFactory.produce( 2, 0 )
                 }
         };
     }

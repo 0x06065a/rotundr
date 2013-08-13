@@ -92,9 +92,13 @@ public abstract class GameState {
 
         currentShape.rotateRight();
         if ( hasCollisions() ) {
-            if ( !moveCurrentShape( -1, 0 ) && !moveCurrentShape( 1, 0 ) ) {
-                currentShape.rotateLeft();
+            for ( int offsetX = 1; offsetX <= currentShape.getBlocks()[0].getX(); offsetX++ ) {
+                if ( moveCurrentShape( -offsetX, 0 ) ) {
+                    return;
+                }
             }
+
+            currentShape.rotateLeft();
         }
     }
 

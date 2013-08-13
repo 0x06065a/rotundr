@@ -34,21 +34,6 @@ public class GameScreen extends AbstractScreen {
 
     public GameScreen( Game game ) {
         super( game );
-
-        Gdx.input.setInputProcessor( new InputAdapter() {
-            @Override
-            public boolean keyDown( int keycode ) {
-                if ( keycode == Input.Keys.RIGHT ) {
-                    gameState.moveCurrentShape( 1, 0 );
-                } else if ( keycode == Input.Keys.LEFT ) {
-                    gameState.moveCurrentShape( -1, 0 );
-                } else if ( keycode == Input.Keys.UP ) {
-                    gameState.rotateCurrentShape();
-                }
-
-                return true;
-            }
-        });
     }
 
     @Override
@@ -76,6 +61,21 @@ public class GameScreen extends AbstractScreen {
         if ( shapeRenderer == null ) {
             shapeRenderer = new ShapeRenderer();
         }
+
+        Gdx.input.setInputProcessor( new InputAdapter() {
+            @Override
+            public boolean keyDown( int keycode ) {
+                if ( keycode == Input.Keys.RIGHT ) {
+                    gameState.moveCurrentShape( 1, 0 );
+                } else if ( keycode == Input.Keys.LEFT ) {
+                    gameState.moveCurrentShape( -1, 0 );
+                } else if ( keycode == Input.Keys.UP ) {
+                    gameState.rotateCurrentShape();
+                }
+
+                return true;
+            }
+        });
     }
 
     @Override
