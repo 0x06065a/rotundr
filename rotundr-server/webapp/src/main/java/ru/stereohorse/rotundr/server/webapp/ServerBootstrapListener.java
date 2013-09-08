@@ -14,6 +14,7 @@ public class ServerBootstrapListener implements ServletContextListener, Runnable
 
     private static final int DEFAULT_PORT = 6699;
     private Server server;
+    private long startTime;
 
     @Override
     public void contextInitialized( ServletContextEvent servletContextEvent ) {
@@ -32,10 +33,17 @@ public class ServerBootstrapListener implements ServletContextListener, Runnable
     @Override
     public void contextDestroyed( ServletContextEvent servletContextEvent ) {
         server.stop();
+
+        if ( startTime != 0 ) {
+            log.info( "Stopped. Uptime: {} ms", System.currentTimeMillis() - startTime );
+        }
     }
 
     @Override
     public void run() {
-        server.start();
+        server.start().syncUninterruptibly();
+
+        startTime = System.currentTimeMillis();
+        log.info( "Started" );
     }
 }

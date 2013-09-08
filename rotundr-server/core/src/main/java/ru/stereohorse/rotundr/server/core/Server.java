@@ -1,72 +1,68 @@
 package ru.stereohorse.rotundr.server.core;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
+import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.stereohorse.rotundr.server.messages.MessageProtos;
+import ru.stereohorse.rotundr.server.core.handlers.RequestHandlerRouter;
+import ru.stereohorse.rotundr.server.messages.MessageProtos.Message;
+
+import java.util.concurrent.Future;
 
 public class Server {
     private static final Logger log = LoggerFactory.getLogger( Server.class );
 
     private int port;
-    private boolean terminationStarted = false;
+    private EventLoopGroup masters = new NioEventLoopGroup();
+    private EventLoopGroup slaves = new NioEventLoopGroup();
 
     public Server( int port ) {
         this.port = port;
     }
 
-    public void stop() {
-        terminationStarted = true;
+    public Future[] stop() {
+        log.info( "Stopping..." );
+
+        return new Future[] {
+                slaves.shutdownGracefully(),
+                masters.shutdownGracefully()
+        };
     }
 
-    public void start() {
-        log.info( "Staring on port [{}]...", port );
-        long startTime = 0;
+    public ChannelFuture start() {
+        log.info( "Starting on port [{}]...", port );
 
-        EventLoopGroup masters = new NioEventLoopGroup();
-        EventLoopGroup slaves = new NioEventLoopGroup();
-        try {
-            ServerBootstrap serverBootstrap = new ServerBootstrap();
-            serverBootstrap.group( masters, slaves )
-                    .channel( NioServerSocketChannel.class )
-                    .childHandler( new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel( SocketChannel socketChannel ) throws Exception {
-                            socketChannel.pipeline().addLast( "frameDecoder", new LengthFieldBasedFrameDecoder( 1048576, 0, 4, 0, 4 ) );
-                            socketChannel.pipeline().addLast( "protobufDecoder", new ProtobufDecoder( MessageProtos.Message.getDefaultInstance() ) );
-                        }
-                    } )
-                    .option( ChannelOption.SO_BACKLOG, 128 )            // TODO: is it mandatory?
-                    .childOption( ChannelOption.SO_KEEPALIVE, true );   // TODO: is it mandatory?
+        ServerBootstrap serverBootstrap = new ServerBootstrap();
+        serverBootstrap.group( masters, slaves )
+                .channel( NioServerSocketChannel.class )
+                .childHandler( new ChannelInitializer<SocketChannel>() {
+                    @Override
+                    protected void initChannel( SocketChannel socketChannel ) throws Exception {
+                        ChannelPipeline p = socketChannel.pipeline();
+                        
+                        p.addLast( "frameDecoder", new ProtobufVarint32FrameDecoder() );
+                        p.addLast( "protobufDecoder", new ProtobufDecoder( Message.getDefaultInstance() ) );
+                        p.addLast( "frameEncoder", new ProtobufVarint32LengthFieldPrepender() );
+                        p.addLast( "protobufEncoder", new ProtobufEncoder() );
+                        
+                        p.addLast( getRequestHandler() );
+                    }
+                } )
+                .option( ChannelOption.SO_BACKLOG, 128 )            // TODO: is it mandatory?
+                .option( ChannelOption.SO_REUSEADDR, true )
+                .childOption( ChannelOption.SO_KEEPALIVE, true );   // TODO: is it mandatory?
 
-            serverBootstrap.bind( port ).sync();
-            startTime = System.currentTimeMillis();
-            log.info( "Started" );
+        return serverBootstrap.bind( port );
+    }
 
-            while ( !terminationStarted ) {
-                try {
-                    Thread.sleep( 5000 );
-                } catch ( InterruptedException e ) {
-                    log.warn( "Termination wait loop is interrupted", e );
-                }
-            }
-        } catch ( Exception e ) {
-            log.error( "Failed", e );
-        } finally {
-            slaves.shutdownGracefully();
-            masters.shutdownGracefully();
-        }
-
-        if ( startTime != 0 ) {
-            log.info( "Stopped. Uptime: {} ms", System.currentTimeMillis() - startTime );
-        }
+    protected RequestHandlerRouter getRequestHandler() {
+        return new RequestHandlerRouter();
     }
 }
