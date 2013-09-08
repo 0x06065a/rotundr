@@ -1,6 +1,6 @@
-package ru.stereohorse.rotundr.messages;
+package ru.stereohorse.rotundr.server.messages;
 
-message Msg {
+message Message {
   enum Operation {
     PING = 0;
     PONG = 1;
