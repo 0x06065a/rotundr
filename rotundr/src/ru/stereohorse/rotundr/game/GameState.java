@@ -9,7 +9,7 @@ import java.util.Random;
 
 public abstract class GameState {
     private static final float INITIAL_PERIOD = 0.2f;
-    private static final float PERIOD_DEGRADATION = 0.01f;
+    private static final float PERIOD_DEGRADATION = 0.0005f;
 
     private Field field = new Field();
 

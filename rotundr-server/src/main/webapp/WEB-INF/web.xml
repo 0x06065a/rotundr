@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         id="WebApp_ID" version="2.5">
+
+    <display-name>rotundr server</display-name>
+
+    <context-param>
+        <description>Vaadin production mode</description>
+        <param-name>productionMode</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
+    <servlet>
+        <servlet-name>vaadin entry point</servlet-name>
+        <servlet-class>
+            com.vaadin.terminal.gwt.server.ApplicationServlet
+        </servlet-class>
+        <init-param>
+            <param-name>application</param-name>
+            <param-value>
+                ru.stereohorse.rotundr.server.WebUI
+            </param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>vaadin entry point</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+</web-app>
