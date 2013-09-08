@@ -1,4 +1,4 @@
-package ru.stereohorse.rotundr.server;
+package ru.stereohorse.rotundr.server.ui;
 
 import com.vaadin.Application;
 import com.vaadin.ui.Window;
@@ -9,6 +9,6 @@ public class WebUI extends Application {
     @Override
     public void init() {
         final Window mainWindow = new Window("Rotundr server");
-        setMainWindow(mainWindow);
+        setMainWindow( mainWindow );
     }
 }

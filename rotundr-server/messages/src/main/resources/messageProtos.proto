@@ -1,0 +1,10 @@
+package ru.stereohorse.rotundr.messages;
+
+message Msg {
+  enum Operation {
+    PING = 0;
+    PONG = 1;
+  }
+
+  required Operation operation = 1;
+}
