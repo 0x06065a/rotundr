@@ -10,9 +10,15 @@ public class Field {
     private Map<Integer, Block> blocks = new HashMap<Integer, Block>( WIDTH * HEIGHT );
 
     public Block getBlock( int x, int y ) {
+        assert x >= 0 && x < WIDTH && y >= 0 && y <= HEIGHT;
+
+        return blocks.get( makeKey( x, y ) );
+    }
+
+    public void removeBlock( int x, int y ) {
         assert x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
 
-        return blocks.get( y * WIDTH + x );
+        blocks.remove( makeKey( x, y ) );
     }
 
     public void setBlock( Block block ) {
@@ -21,7 +27,11 @@ public class Field {
 
         assert x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT;
 
-        blocks.put( y * WIDTH + x, block );
+        blocks.put( makeKey( x, y ), block );
+    }
+
+    private int makeKey( int x, int y ) {
+        return y * WIDTH + x;
     }
 
     public Iterable<Block> getBlocks() {
