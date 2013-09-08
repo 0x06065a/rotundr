@@ -11,24 +11,4 @@
     <packaging>jar</packaging>
 
     <artifactId>core</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.0.8.Final</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>ru.stereohorse.rotundr.server</groupId>
-            <artifactId>messages</artifactId>
-        </dependency>
-    </dependencies>
 </project>

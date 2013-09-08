@@ -1,4 +1,4 @@
-package ru.stereohorse.rotundr.server.messages;
+package ru.stereohorse.rotundr.network.messages;
 
 message Message {
   enum Operation {
