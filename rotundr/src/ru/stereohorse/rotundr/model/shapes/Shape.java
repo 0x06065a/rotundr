@@ -5,7 +5,7 @@ import ru.stereohorse.rotundr.model.Field;
 import ru.stereohorse.rotundr.model.gui.BlockVisual;
 
 public class Shape {
-    protected Block[][] shapeStates;
+    private Block[][] shapeStates;
 
     // coordinates of left bottom corner
     private int x = Field.WIDTH / 2;

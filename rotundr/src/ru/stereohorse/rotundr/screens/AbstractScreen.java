@@ -1,18 +1,11 @@
 package ru.stereohorse.rotundr.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.utils.Disposable;
 
 public class AbstractScreen implements Screen, Disposable {
-    protected final Game game;
-
-    protected AbstractScreen( Game game ) {
-        this.game = game;
-    }
-
     @Override
     public void render( float delta ) {
         Gdx.gl.glClear( GL10.GL_COLOR_BUFFER_BIT );

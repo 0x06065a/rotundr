@@ -4,12 +4,12 @@ import com.badlogic.gdx.Game;
 import ru.stereohorse.rotundr.screens.GameScreen;
 
 public class Rotundr extends Game {
-    GameScreen gameScreen;
+    private GameScreen gameScreen;
 
     @Override
     public void create() {
         if ( gameScreen == null ) {
-            gameScreen = new GameScreen( this );
+            gameScreen = new GameScreen();
         }
         setScreen( gameScreen );
     }

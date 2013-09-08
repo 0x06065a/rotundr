@@ -1,6 +1,5 @@
 package ru.stereohorse.rotundr.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -31,10 +30,6 @@ public class GameScreen extends AbstractScreen {
     private ShapeRenderer shapeRenderer;
 
     private Random random = new Random();
-
-    public GameScreen( Game game ) {
-        super( game );
-    }
 
     @Override
     public void resize( int width, int height ) {

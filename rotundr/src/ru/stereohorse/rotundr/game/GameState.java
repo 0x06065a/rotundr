@@ -30,7 +30,7 @@ public abstract class GameState {
     private Random random = new Random();
 
     public void update( float delta ) {
-        if ( !tick( delta ) ) {
+        if ( waitForGameTick( delta ) ) {
             return;
         }
 
@@ -143,16 +143,16 @@ public abstract class GameState {
         return false;
     }
 
-    private boolean tick( float delta ) {
+    private boolean waitForGameTick( float delta ) {
         periodLeft -= delta;
         if ( periodLeft > 0f ) {
-            return false;
+            return true;
         }
 
         period -= PERIOD_DEGRADATION;
         periodLeft = period;
 
-        return true;
+        return false;
     }
 
     public Shape getCurrentShape() {
